@@ -1,0 +1,48 @@
+<!-- Dědí základní šablonu base.html -->
+{% extends "base.html" %}
+
+<!-- Vložení informace do bloku titulu stránky -->
+{% block title %}{{ titulek }}{% endblock %}
+
+<!-- Obsahový blok stránky -->
+{% block content %}
+<div class="row mb-3">
+    <div class="col-sm-12">
+        <h2 class="display-4 text-center text-success">{{ titulek }}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <table class="table table-responsive table-hover table-striped">
+            <thead class="text-info">
+                <tr>
+                    <th>Název filmu</th>
+                    <th>Datum uvedení</th>
+                    <th>Délka filmu</th>
+                    <th>Hodnocení</th>
+                    <th>Žánry</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- Postupné načtení filmů z proměnné filmy -->
+            {% for film in filmy %}
+                <!-- Výpis jednotlivých řádků tabulky s informacemi o 1 filmu -->
+                <tr>
+                    <!-- Název filmu s odkazem na stránku s detailem -->
+                    <td><a href="{% url 'film_detail' film.id %}" class="text-uppercase text-info">{{ film.title }}</a></td>
+                    <td>{{ film.release_date }}</td>
+                    <td class="text-right">{{ film.runtime }} min.</td>
+                    <td class="text-right"><b class="badge-pill badge-info">{{ film.rate }}</b></td>
+                    <td>
+                    <!-- Výpis všech žánrů, které byly k filmu přířazeny i s odkazy na stránku výpisu žánrů -->
+                        {% for genre in film.genres.all %}
+                        <a href="{% url 'film_genre' genre.name %}" class="btn btn-light">{{ genre.name }}</a>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

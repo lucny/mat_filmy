@@ -1,0 +1,41 @@
+<!-- Dědí základní šablonu base.html -->
+{% extends "base.html" %}
+
+<!-- Vložení informace do bloku titulu stránky -->
+{% block title %}Žánr: {{ zanr }}{% endblock %}
+
+<!-- Obsahový blok stránky -->
+{% block content %}
+<div class="row mb-3">
+    <div class="col-sm-12">
+        <h2 class="display-4 text-center text-success">Filmový žánr - <b>{{ zanr }}</b></h2>
+    </div>
+</div>
+<div class="row">
+    <!-- Postupné načtení filmů z proměnné filmy -->
+    {% for film in filmy %}
+    <div class="col-md-4 col-lg-3">
+        <div class="card">
+            {% if film.poster %}
+                <img class="card-img-top poster-img" src="{{ film.poster.url }}" alt="{{ film.title }}">
+            {% endif %}
+            <div class="card-body">
+                <!-- Odkaz ještě musí být doplněn o adresu stránky s detailem filmu -->
+                <h4 class="card-title"><a href="{% url 'film_detail' film.id %}" class="text-info">{{ film.title }}</a></h4>
+                <p class="bg-secondary p-2 text-light">Rok: <b>{{ film.release_date.year }}</b>, délka: <b>{{ film.runtime }} min.</b></p>
+                <p class="text-small">{{ film.plot|truncatewords:20 }}</p>
+                <!-- Výpis všech žánrů filmu - odkaz bude posléze ukazovat všechny filmy daného žánru -->
+                <p class="card-text">
+                    {% for genre in film.genres.all %}
+                    <a href="{% url 'film_genre' genre.name %}" class="btn btn-light">{{ genre.name }}</a>
+                    {% endfor %}
+                </p>
+                <!-- Odkaz ještě musí být doplněn o adresu stránky s detailem filmu -->
+                <a href="{% url 'film_detail' film.id %}" class="btn btn-info">Podrobnosti</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

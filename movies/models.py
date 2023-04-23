@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
@@ -73,3 +74,25 @@ class Attachment(models.Model):
     def __str__(self):
         return f'{self.title}, ({self.type})'
 
+
+class Artist(models.Model):
+    first_name = models.CharField(verbose_name='Jméno', help_text='Zadejte křestní jméno umělce', max_length=50)
+    second_name = models.CharField(verbose_name='Příjmení', help_text='Zadejte příjmení umělce', max_length=50)
+    birth = models.DateField(verbose_name='Datum narození', help_text='Zadejte datum narození umělce')
+    photo = models.ImageField(upload_to='artists', blank=True, null=True, verbose_name='Fotka', help_text='Vložte fotku umělce')
+    bio = models.TextField(blank=True, null=True, verbose_name='Životopis', help_text='Napište informace o životě umělce')
+    GENDER = [
+        ('muž', 'Muž'),
+        ('žena', 'Žena'),
+        ('jiné', 'Jiné'),
+    ]
+    gender = models.CharField(choices=GENDER, verbose_name='Pohlaví', help_text='Zadejte pohlaví umělce', max_length=10, default='žena')
+    film = models.ManyToManyField('Film', verbose_name='Název filmu', help_text='Vyberte filmy spojené s umělcem')
+
+    class Meta:
+        verbose_name = 'Umělec'
+        verbose_name_plural = 'Umělci'
+        ordering = ['-birth', 'second_name']
+
+    def __str__(self):
+        return f'{self.second_name}, {self.first_name} (nar. {self.birth.strftime("%d. %m.")})'
